@@ -2,16 +2,15 @@
 #include <vector>
 using namespace std;
 
-vector<int> a = {1, 2, 3, 4, 5, 6};
 
 // index が条件を満たすかどうか
-bool isOK(int index, int key) {
+bool isOK(int index, int key, vector<int> &a) {
     if (a[index] >= key) return true;
     else return false;
 }
 
 // 汎用的な二分探索のテンプレ
-int binary_search(int key) {
+int binary_search(int key, vector<int> &a) {
     //単調性(あるインデックス以上、もしくは以下はすべて条件を満たす)がある場合使える
     //条件を満たす解が存在する区間を[ok, ng)または(ng, ok]で持つ
     //okとngの差が1になるまでループして解の存在区間を縮めていくことで、
@@ -24,12 +23,13 @@ int binary_search(int key) {
     while (abs(ok - ng) > 1) {
         int mid = (ok + ng) / 2;
 
-        if (isOK(mid, key)) ok = mid;
+        if (isOK(mid, key, a)) ok = mid;
         else ng = mid;
     }
     return ok;
 }
 
 int main() {
-    cout << binary_search(2) << endl; // a[3] = 51 (さっきは 4 を返したが今回は「最小の index」なので 3)
+    vector<int> a = {1, 2, 3, 4, 5, 6};
+    cout << binary_search(2, a) << endl; // a[3] = 51 (さっきは 4 を返したが今回は「最小の index」なので 3)
 }
