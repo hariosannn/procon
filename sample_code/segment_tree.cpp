@@ -37,6 +37,8 @@ struct SEGMENT_TREE {
     }
 
     int sum(int l, int r){
+        //半開区間[l, r)なのでr+1
+        r += 1;
         l += SEG_LEN;
         r += SEG_LEN;
         int ans = 0;
@@ -68,8 +70,7 @@ int main(){
         }
         if(com == 1){
             cin >> l >> r;
-            //半開区間[l, r)なのでr+1
-            cout << seg_t.sum(l, r+1) << endl;
+            cout << seg_t.sum(l, r) << endl;
         }
     }
     return 0;

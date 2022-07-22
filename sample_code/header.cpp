@@ -30,11 +30,3 @@ istream &operator>>(istream &is, vector< T > &v) {
     for(T &in : v) is >> in;
     return is;
 }
-
-int main(){
-    string S;
-    cin >> S;
-    rep(i, 4){
-
-    }
-}
