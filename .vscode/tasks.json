@@ -44,6 +44,19 @@
                 "isDefault": true
             },
             "detail": "デバッガーによって生成されたタスク。"
+        },
+        {
+            "label": "test_atcoder_sample",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "type": "shell",
+            "command": "${workspaceFolder}/AtCoder/onlinejudge/cptest.sh",
+            "args": [
+                "${relativeFileDirname}_${fileBasenameNoExtension}", 
+                "${file}"
+            ]
         }
     ]
 }

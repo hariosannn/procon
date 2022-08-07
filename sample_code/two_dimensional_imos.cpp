@@ -34,43 +34,59 @@ istream &operator>>(istream &is, vector< T > &v) {
     return is;
 }
 
+struct coord
+{
+    int lx, ly, rx, ry;
+};
+
+
 int main(){
-    ll N, L, R;
-    cin >> N >> L >> R;
-    V_L A(N);
-    cin >> A;
+    ll N;
+    cin >> N;
+    ll A = 1000;
+    vector<vector<ll>> M(A+1, V_L(A+1, 0));
 
-    ll max_diff = 0;
-    ll max_ind = -1;
-    ll sum_A = 0;
-    ll sum_L = 0;
     rep(i, N){
-        sum_A += A.at(i);
-        sum_L += L;
-        if(max_diff < sum_A-sum_L){
-            max_diff = sum_A-sum_L;
-            max_ind = i;
-        }
+        ll lx, ly, rx, ry;
+        cin >> lx >> ly >> rx >> ry;
+        ly = A-ly;
+        ry = A-ry;
+        M.at(ry).at(lx) = M.at(ry).at(lx)+ 1;
+        M.at(ly).at(lx) = M.at(ly).at(lx)- 1;
+        M.at(ry).at(rx) = M.at(ry).at(rx) - 1;
+        M.at(ly).at(rx) = M.at(ly).at(rx) + 1;
     }
 
-    ll max_diff_r = 0;
-    ll max_ind_r = N;
-    ll sum_A_r = 0;
-    ll sum_R = 0;
-    rep(i, N){
-        sum_A_r += A.at(N-i-1);
-        sum_R += R;
-        if(max_diff_r < sum_A_r-sum_R){
-            max_diff_r = sum_A_r-sum_R;
-            max_ind_r = N-i-1;
+    for(ll i=0; i<A+1; i++){
+        ll tmp_s = 0;
+        for(ll j=0; j<A+1; j++){
+            tmp_s += M.at(i).at(j);
+            M.at(i).at(j) = tmp_s;
         }
     }
-    ll ans = 0;
-    ans += (max_ind+1)*L + (N-max_ind_r)*R;
-    rep(i, N){
-        if((i>max_ind) & (i<max_ind_r)){
-            ans += A.at(i);
+    for(ll i=0; i<A+1; i++){
+        ll tmp_s = 0;
+        for(ll j=0; j<A+1; j++){
+            tmp_s += M.at(j).at(i);
+            M.at(j).at(i) = tmp_s;
         }
     }
-    cout << ans << endl;
+
+    map<ll, ll> area;
+    rep(i, N){
+        area[i+1] = 0;
+    }
+
+    for(ll i=0; i<A; i++){
+        for(ll j=0; j<A; j++){
+            if(M.at(i).at(j) != 0){
+                area[M.at(i).at(j)] += 1;
+            }
+        }
+    }
+
+    for(auto p:area){
+        cout << p.second << endl;
+    }
+
 }

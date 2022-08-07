@@ -37,7 +37,7 @@ struct SEGMENT_TREE {
     }
 
     int sum(int l, int r){
-        //半開区間[l, r)なのでr+1
+        //半開区間で[l, r]を表すので[l, r+1)
         r += 1;
         l += SEG_LEN;
         r += SEG_LEN;

@@ -34,43 +34,27 @@ istream &operator>>(istream &is, vector< T > &v) {
     return is;
 }
 
+struct coord
+{
+    int lx, ly, rx, ry;
+};
+
+
 int main(){
-    ll N, L, R;
-    cin >> N >> L >> R;
-    V_L A(N);
-    cin >> A;
-
-    ll max_diff = 0;
-    ll max_ind = -1;
-    ll sum_A = 0;
-    ll sum_L = 0;
-    rep(i, N){
-        sum_A += A.at(i);
-        sum_L += L;
-        if(max_diff < sum_A-sum_L){
-            max_diff = sum_A-sum_L;
-            max_ind = i;
-        }
+    map<int, int> M;
+    set<int> S;
+    rep(i, 5){
+        int tmp;
+        cin >> tmp;
+        M[tmp] += 1;
+        S.insert(tmp);
     }
-
-    ll max_diff_r = 0;
-    ll max_ind_r = N;
-    ll sum_A_r = 0;
-    ll sum_R = 0;
-    rep(i, N){
-        sum_A_r += A.at(N-i-1);
-        sum_R += R;
-        if(max_diff_r < sum_A_r-sum_R){
-            max_diff_r = sum_A_r-sum_R;
-            max_ind_r = N-i-1;
-        }
+    V_I unique;
+    for(int a:S){
+        unique.push_back(a);
     }
-    ll ans = 0;
-    ans += (max_ind+1)*L + (N-max_ind_r)*R;
-    rep(i, N){
-        if((i>max_ind) & (i<max_ind_r)){
-            ans += A.at(i);
-        }
-    }
+    string ans = "No";
+    if((M[unique.at(0)] == 3) & (M[unique.at(1)] == 2)) ans="Yes";
+    if((M[unique.at(0)] == 2) & (M[unique.at(1)] == 3)) ans="Yes";
     cout << ans << endl;
 }
