@@ -7,7 +7,7 @@ int inf=1e8;
 #define rep(i, n) for (int i = 0; i < (int)(n); i++)
 
 template <typename T>
-struct SEGMENT_TREE {
+struct SEGMENT_TREE {//segment木　※インデックスは1から始まる
     T SEG_LEN;
     T init_val=0;
     vector<T> seg;

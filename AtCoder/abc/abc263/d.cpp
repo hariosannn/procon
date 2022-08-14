@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
 #include <atcoder/all>
 using namespace std;
+using namespace atcoder;
+using mint = modint1000000007;
+
 using ll = long long;
 using ld = long double;
 using V_I = vector<int>;
@@ -34,36 +37,35 @@ istream &operator>>(istream &is, vector< T > &v) {
     return is;
 }
 
-struct coord
-{
-    int lx, ly, rx, ry;
-};
-
-
 int main(){
-    ll N, L, R;
-    cin >> N >> L >> R;
-    V_L A(N);
-    cin >> A;
-
-    V_L L_min;
-    V_L R_min;
-
-    L_min.push_back(0);
-    R_min.push_back(0);
-
-    for(int i=0; i<N; i++){
-        L_min.push_back(min(L_min.at(i)+A.at(i), L*(i+1)));
-    }
-    
-    for(int i=0; i<N; i++){
-        R_min.push_back(min(R_min.at(i)+A.at(N-i-1), R*(i+1)));
+    int N, M;
+    cin >> N >> M;
+    vector<V_I> graph(N, V_I{});
+    rep(i, M){
+        int a, b;
+        cin >> a >> b;
+        graph.at(a-1).push_back(b-1);
     }
 
-    ll ans = LINF;
-    rep(i, N+1){
-        chmin(ans, L_min.at(i) + R_min.at(N-i));
+    set<set<int, int>> ans;
+    rep(i, N){
+        queue<int> que;
+        int start = i;
+        que.push(start);
+        vector<int> dist(N, -1); 
+        dist.at(start) = 0;
+
+        while(!que.empty()){
+            int v = que.front(); // キューから先頭頂点を取り出す
+            que.pop();
+            for(int next:graph.at(v)){
+                if(dist.at(next) != -1) continue;
+                que.push(next);
+                dist.at(next) = dist.at(v) + 1;
+                ans.insert(set<int, int>{start, next});
+            }
+        }
     }
 
-    cout << ans << endl;
-}
+    cout << ans.size() << endl;
+}   
