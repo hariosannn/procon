@@ -1,36 +1,37 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int inf = 1e9;
+using ll = long long;
+constexpr ll LINF = 1001001001001001001ll;
 
-vector<vector<int>> graph = {{0 , 5, 0, 10, 0, 0, 0},
-                             {5 , 0, 3, 0 , 0, 0, 2},
-                             {0 , 3, 0, 1 , 0, 8, 9},
-                             {10, 0, 1, 0 , 6, 0, 0},
-                             {0 , 0, 0, 6 , 0, 4, 0},
-                             {0 , 0, 8, 0 , 4, 0, 6},
-                             {0 , 2, 9, 0 , 0, 6, 0}};
+vector<vector<ll>> graph = { {1, 3},
+                             {0, 2, 6},
+                             {1, 3, 5, 6},
+                             {0, 2, 4},
+                             {3, 5},
+                             {2, 4, 6},
+                             {1, 2, 5} };
 
                              
 
 int main(){
-    queue<int> que;
-    int start = 2;
+    queue<ll> que;
+    ll start = 0;
     que.push(start);
-    int n = graph.size();
-    vector<int> dist(n, -1); 
+    ll n = graph.size();
+    vector<ll> dist(n, -1); 
     dist.at(start) = 0;
 
     while(!que.empty()){
-        int v = que.front(); // キューから先頭頂点を取り出す
+        ll v = que.front(); // キューから先頭頂点を取り出す
         que.pop();
-        for(int i=0; i<n; i++){
-            int w = graph.at(v).at(i);
-            if((w == 0) | (dist.at(i) != -1)) continue;
-            que.push(i);
-            dist.at(i) = dist.at(v) + 1;
+        for(ll next:graph.at(v)){
+            // すでに訪れているなら次の探索候補に入れない
+            if(dist.at(next) != -1) continue;
+            que.push(next);
+            dist.at(next) = dist.at(v) + 1;
         }
     }
 
-    for (int v = 0; v < n; ++v) cout << v << ": " << dist[v] << endl;
+    for (ll v = 0; v < n; ++v) cout << v << ": " << dist[v] << endl;
 }

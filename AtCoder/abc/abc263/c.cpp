@@ -36,87 +36,41 @@ istream &operator>>(istream &is, vector< T > &v) {
     return is;
 }
 
-//n以下の整数について最小の素因数を求めた結果の配列を返す
-//min_factor[i]はiを割り切る最小の数（iの素因数のうち最小のもの）
-//min_factor[i] == iならiは素数（i=0, 1のときを除く）
-vector<int> sieve(int n){
-    //素数候補を管理する配列
-    vector<int> min_factor(n+1);
-    //2以上の数を一度素数候補に入れる
-    for(int i=0; i<=n; i++) min_factor[i] = i;
-    //それぞれの数について最小の素因数を求める
-    for(int i=2; i*i<=n; i++){
-        if(min_factor[i] == i){
-            for(int j=2; i*j<=n; j++){
-                if(min_factor[i*j] > i){
-                    min_factor[i*j] = i;
-                }
+int main(){
+    ll X;
+    cin >> X;
+    if(X <= 10){
+        cout << X << endl;
+        return 0;
+    }
+    string s_X = to_string(X);
+    ll ans = LINF;
+    V_L diff;
+    rep(i, 19){
+        diff.push_back(i-9);
+    }
+    for(int i=s_X.at(0)-'0'; i<10; i++){
+        string tmp = "";
+        ll tmp_score;
+        int num;
+        rep(j, diff.size()){
+            tmp = "";
+            rep(k, s_X.size()){
+                num = i;
+                num += diff.at(j)*k;
+                if(num < 0) break;
+                tmp.push_back(num+'0');
+            }
+            if((num >= 0) && (tmp.at(0)-'0' > 0)){
+                tmp_score = stol(tmp);
+                if(tmp_score >= X) chmin(ans, tmp_score);
             }
         }
     }
-    return min_factor;
-}
-
-//配列min_factorを使ってmを素因数分解する
-//配列ansにはmの素因数が小さい順に格納される
-set<int> factor(vector<int> &min_factor, int m){
-    set<int> ans;
-    while(m > 1){
-        ans.insert(min_factor[m]);
-        m /= min_factor[m];
-    }
-    return ans;
-}
-
-
-int gcd(int a, int b){
-    while((a > 0) && (b > 0)){
-        if(a > b){
-            a %= b;
-        }
-        else{
-            b %= a;
-        }
-    }    
-    return max(a, b);
-}
-
-int main(){
-    int N;
-    cin >> N;
-    V_I A(N);
-    cin >> A;
-
-    bool pair_p = true;
-    bool set_p = true;
-
-    V_I min_factor = sieve(1e6);
-    map<int, int> factor_map;
-    rep(i, N){
-        set<int> tmp_factor = factor(min_factor, A.at(i));
-        for(int f:tmp_factor){
-            factor_map[f] += 1;
-        }
-    }
-    for(auto p:factor_map){
-        if(p.second > 1){
-            pair_p = false;
-        }
-    }
-    int tmp_gcd = A.at(0);
-    for(int i=1; i<N; i++){
-        tmp_gcd = gcd(A.at(i), tmp_gcd);
-    }
-    if(tmp_gcd != 1){
-        set_p = false;
-    }
-    if(pair_p){
-        cout << "pairwise coprime" << endl;
-    }
-    else if(set_p){
-        cout << "setwise coprime" << endl;
-    }
+    if(ans != LINF) cout << ans << endl;
     else{
-        cout << "not coprime" << endl;
+        rep(i, s_X.size()+1)
+        cout << 1;
     }
+    cout << endl;
 }

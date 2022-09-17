@@ -1,64 +1,68 @@
 #include <bits/stdc++.h>
 using namespace std;
+using ll = long long;
+constexpr ll LINF = 1001001001001001001ll;
 
-int inf = 1e9;
-
-vector<vector<int>> graph = {{0 , 5, 0, 10, 0, 0, 0},
-                             {5 , 0, 3, 0 , 0, 0, 2},
-                             {0 , 3, 0, 1 , 0, 8, 9},
-                             {10, 0, 1, 0 , 6, 0, 0},
-                             {0 , 0, 0, 6 , 0, 4, 0},
-                             {0 , 0, 8, 0 , 4, 0, 6},
-                             {0 , 2, 9, 0 , 0, 6, 0}};
+struct edge{
+    ll to;
+    ll w;
+};
+vector<vector<edge>> graph = {{edge{1,5}, edge{3,10}},
+                              {edge{0,5}, edge{2,3}, edge{6,2}},
+                              {edge{1,3}, edge{3,1}, edge{5,8}, edge{6,9}},
+                              {edge{0,10}, edge{2,1}, edge{4,6}},
+                              {edge{3,6}, edge{5,4}},
+                              {edge{2,8}, edge{4,4}, edge{6,6}},
+                              {edge{1,2}, edge{2,9}, edge{5,6}}};
 
 //1要素目に暫定の距離、2要素目にノード番号を格納するpair
-typedef pair<int, int> P;
+typedef pair<ll, ll> P;
 
-vector<int> dijkstra(vector<vector<int>> graph, int n, int start, int goal, int INF, vector<int> &prev){
+vector<ll> dijkstra(vector<vector<edge>> graph, ll n, ll start, ll goal, ll INF, vector<ll> &prev){
     priority_queue<P, vector<P>, greater<P>> que;
-    vector<int> dst(n, INF);
+    vector<ll> dst(n, INF);
     dst.at(start) = 0;
     que.push(P(0, start));
     while(!que.empty()){
-        int d = que.top().first;
-        int current_node = que.top().second;
+        ll d = que.top().first;
+        ll current_node = que.top().second;
         que.pop();
         //全部探索するなら下の行をコメントアウト
         //if(current_node == goal) return dst;
         //queの中には過去追加した最短ではない距離のデータも入っており、それが来たらスルー
         if(dst.at(current_node) < d) continue;
-        for(int next_node=0; next_node<n; next_node++){
+        for(edge next: graph.at(current_node)){
             //現在のノードと次のノードのgraphがつながっており、dst[next_node]が更新できる場合
             //dst[next_node]を更新し、queにそのデータを追加
-            if(graph.at(current_node).at(next_node) > 0 && 
-                dst.at(next_node) > d + graph.at(current_node).at(next_node)){
-                    dst.at(next_node) = d + graph.at(current_node).at(next_node);
-                    que.push(P(dst.at(next_node), next_node));
-                    prev.at(next_node) = current_node;
+            if(dst.at(next.to) > d + next.w){
+                    dst.at(next.to) = d + next.w;
+                    que.push(P(dst.at(next.to), next.to));
+                    prev.at(next.to) = current_node;
                 }
         }
     }
     return dst;
 }                  
 
-vector<int> get_path(vector<int> prev,int start, int goal){
-    vector<int> path;
-    for(int t=goal;t != -1;t = prev[t]) path.push_back(t);
+vector<ll> get_path(vector<ll> prev,ll start, ll goal){
+    vector<ll> path;
+    for(ll t=goal;t != -1;t = prev[t]) path.push_back(t);
     reverse(path.begin(), path.end());
     return path;
 }
 
 int main(){
-    int n = graph.size();
-    int start = 0, goal = 5;
-    vector<int> prev(n, -1);
-    vector<int> dst = dijkstra(graph, n, start, goal, inf, prev);
-    for(int d: dst){
+    ll n = graph.size();
+    ll start = 0, goal = 5;
+    vector<ll> prev(n, -1);
+    vector<ll> dst = dijkstra(graph, n, start, goal, LINF, prev);
+    for(ll d: dst){
         cout << d << endl;
     }
 
-    vector<int> path = get_path(prev, start, goal);
-    for(int p: path){
+    vector<ll> path = get_path(prev, start, goal);
+    cout << "path is" << endl;
+    for(ll p: path){
         cout << p << endl;
     }
 }
