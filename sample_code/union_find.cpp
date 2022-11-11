@@ -1,63 +1,39 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
 using namespace std;
-using ll = long long;
-#define REP(i, n) for (int i = 0; i < (int)(n); i++)
 
-//以下、素集合と木は同じものを表す
-class UnionFind{
-public:
-    vector<ll> parent; //parent[i]はiの親
-    vector<ll> siz; //素集合のサイズを表す配列(1で初期化)
-    map<ll,vector<ll>> group; //集合ごとに管理する(key:集合の代表元、value:集合の要素の配列)
-    ll n; //要素数
+// Union-Find
+struct UnionFind {
+    vector<int> par, rank, siz;
 
-    //コンストラクタ
-    UnionFind(ll n_):n(n_),parent(n_),siz(n_,1){ 
-        //全ての要素の根が自身であるとして初期化
-        for(ll i=0;i<n;i++){parent[i]=i;}
+    // 構造体の初期化
+    UnionFind(int n) : par(n,-1), rank(n,0), siz(n,1) { }
+
+    // 根を求める
+    int leader(int x) {
+        if (par[x]==-1) return x; // x が根の場合は x を返す
+        else return par[x] = leader(par[x]); // 経路圧縮
     }
 
-    //データxの属する木の根を取得(経路圧縮も行う)
-    ll root(ll x){
-        if(parent[x]==x) return x;
-        return parent[x]=root(parent[x]);//代入式の値は代入した変数の値なので、経路圧縮できる
+    // x と y が同じグループに属するか (= 根が一致するか)
+    bool same(int x, int y) {
+        return leader(x)==leader(y);
     }
 
-    //xとyの木を併合
-    void unite(ll x,ll y){
-        ll rx=root(x);//xの根
-        ll ry=root(y);//yの根
-        if(rx==ry) return;//同じ木にある時
-        //小さい集合を大きい集合へと併合(ry→rxへ併合)
-        if(siz[rx]<siz[ry]) swap(rx,ry);
-        siz[rx]+=siz[ry];
-        parent[ry]=rx;//xとyが同じ木にない時はyの根ryをxの根rxにつける
+    // x を含むグループと y を含むグループを併合する
+    bool merge(int x, int y) {
+        int rx = leader(x), ry = leader(y); // x 側と y 側の根を取得する
+        if (rx==ry) return false; // すでに同じグループのときは何もしない
+        // union by rank
+        if (rank[rx]<rank[ry]) swap(rx, ry); // ry 側の rank が小さくなるようにする
+        par[ry] = rx; // ry を rx の子とする
+        if (rank[rx]==rank[ry]) rank[rx]++; // rx 側の rank を調整する
+        siz[rx] += siz[ry]; // rx 側の siz を調整する
+        return true;
     }
 
-    //xとyが属する木が同じかを判定
-    bool same(ll x,ll y){
-        ll rx=root(x);
-        ll ry=root(y);
-        return rx==ry;
-    }
-
-    //xの素集合のサイズを取得
-    ll size(ll x){
-        return siz[root(x)];
-    }
-
-    //素集合をそれぞれグループ化
-    void grouping(){
-        //経路圧縮を先に行う
-        REP(i,n)root(i);
-        //mapで管理する(デフォルト構築を利用)
-        REP(i,n)group[parent[i]].PB(i);
-    }
-
-    //素集合系を削除して初期化
-    void clear(){
-        REP(i,n){parent[i]=i;}
-        siz=vector<ll>(n,1);
-        group.clear();
+    // x を含む根付き木のサイズを求める
+    int size(int x) {
+        return siz[leader(x)];
     }
 };
