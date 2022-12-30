@@ -8,6 +8,7 @@ using ld = long double;
 using V_I = vector<int>;
 using V_L = vector<ll>;
 using P_I = pair<int, int>;
+using P_L = pair<ll, ll>;
 #define ALL(a) (a).begin(),(a).end()
 #define rep(i, n) for (ll i = 0; i < (ll)(n); i++)
 constexpr int INF = 1001001001;
@@ -54,46 +55,54 @@ int main(){
     cin >> N;
     V_L A(N), B(N);
     cin >> A >> B;
+    
+    set<ll> only_a;
+    set<ll> only_b;
+    set<ll> common;
 
-    map<ll, set<ll>> ans;
-    set<ll> ab_set;
-    set<ll> ba_set;
-    set<ll> common_set;
-    for (ll l = 0, r = 0; l < N; l++){
-        if(common_set.find(A.at(l)) != common_set.end()){
-            ans[l] = ans[l-1];
-            continue;
+    // map[a_ind] = min(b_ind), max(b_ind)
+    map<ll, P_L> ans;
+    rep(i, N){
+        ans[i] = P_L{LINF, -LINF};
+    }
+    ll b_ind = 0;
+    for(ll a_ind=0; a_ind<N; a_ind++){
+        ll current_a = A.at(a_ind);
+        if(common.find(current_a) == common.end()){
+            only_a.insert(current_a);
         }
         else{
-            if(ba_set.find(A.at(l)) != ba_set.end()){
-                ba_set.erase(A.at(l));
-                common_set.insert(A.at(l));
-            }
-            else{
-                ab_set.insert(A.at(l));
-            }
+            ans[a_ind] = ans[a_ind-1];
         }
-        common_set.insert(A.at(l));
-        for (; r < N && (ab_set.size() > 0) && (ba_set.size() == 0); r++){//条件を満たす限り右に進む
-            if(ab_set.find(B.at(r)) != ab_set.end()){
 
+        for(; (b_ind<N) && ((common.find(B.at(b_ind)) != common.end()) ||
+                            (only_a.find(B.at(b_ind)) != only_a.end())); b_ind++){
+            ll current_b = B.at(b_ind);
+            if(common.find(B.at(b_ind)) == common.end()){
+                if(only_a.find(current_b) != only_a.end()){
+                    only_a.erase(current_b);
+                    common.insert(current_b);
+                }
             }
-            ab_set.erase(B.at(r));
-            if(ab_set.size() == 0) ans[l].insert(r);
+            if((only_a.size() == 0)){
+                ans[a_ind].first = min(ans[a_ind].first, b_ind);
+                ans[a_ind].second = max(ans[a_ind].second, b_ind);
+            }
+
         }
     }
+
     ll Q;
     cin >> Q;
     rep(i, Q){
-        ll x, y;
-        cin >> x >> y;
-        x--;
-        y--;
-        if(ans[x].size() == 0){
-            cout << "No" << endl;
-            continue;
+        ll a_i, b_i;
+        cin >> a_i >> b_i;
+        a_i--;
+        b_i--;
+        if((ans[a_i].first <= b_i) && (b_i <= ans[a_i].second)){
+            cout << "Yes" << endl;
         }
-        if(ans[x].find(y) != ans[x].end()) cout << "Yes" << endl;
         else cout << "No" << endl;
     }
+    return 0;
 }

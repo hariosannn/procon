@@ -37,25 +37,31 @@ istream &operator>>(istream &is, vector< T > &v) {
     return is;
 }
 
-void f_num(vector<V_I> graph, ll x, ll y, ll ret, ll &ans){
-    graph.at(x).at(y) = 0;
-    bool is_goal = true;
-    ret += 1;
-    rep(dir, 4){
-        if(graph.at(x+DX[dir]).at(y+DY[dir]) == 1){
-            f_num(graph, x+DX[dir], y+DY[dir], ret, ans);
-            is_goal = false;
-        }
-    }
-    //graph.at(x).at(y) = 1;
-    if(is_goal) {
-        if(ans < ret) ans = ret;
-        return;
-    }
-}
-
 int main(){
-    ll N;
-    cin >> N;
-    cout << (N*(N-1)/2) << endl;
+    ll N, M;
+    cin >> N >> M;
+
+    vector<P_L> edges;
+    rep(i, M){
+        ll a, b;
+        cin >> a >> b;
+        a--;
+        b--;
+        edges.push_back(P_L{a, b});
+    }
+
+    dsu uf(N);
+    ll temp_ans = (N*N - N)/2;
+    V_L ans{temp_ans};
+    rep(i, M-1){
+        if(!uf.same(edges.at(M-i-1).first, edges.at(M-i-1).second)){
+            temp_ans -= uf.size(edges.at(M-i-1).first)*uf.size(edges.at(M-i-1).second);
+        }
+        uf.merge(edges.at(M-i-1).first, edges.at(M-i-1).second);
+        ans.push_back(temp_ans);
+    }
+    reverse(ans.begin(), ans.end());
+    for(ll a:ans){
+        cout << a << endl;
+    }
 } 
